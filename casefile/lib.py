@@ -1,2 +1,0 @@
-def tmp():
-    pass
