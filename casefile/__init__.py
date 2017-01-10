@@ -1,1 +1,1 @@
-from .lib import tmp
+from .config import find_config, read_config
