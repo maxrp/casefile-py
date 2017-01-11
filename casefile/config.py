@@ -48,6 +48,6 @@ def read_config():
         print('Created default config in {}'.format(config_file))
 
     with config_file.open('r') as cf:
-        config.read(cf)
+        config.read_file(cf)
 
     return config
