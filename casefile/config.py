@@ -22,7 +22,7 @@ def _write_config():
         config = CasefileConfigParser()
         config['casefile'] = {
                 'base': Path.home() / 'cases',
-                'case_directories': ['raw', 'processed'],
+                'case_directories': 'raw,processed',
                 'case_series': ascii_uppercase,
                 'date_fmt': '%Y-%m-%d',
                 'notes_file': 'notes.md',
