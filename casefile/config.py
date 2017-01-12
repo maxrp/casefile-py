@@ -1,7 +1,13 @@
-from configparser import ConfigParser
+from configparser import ConfigParser, ExtendedInterpolation
+from functools import partial
 from os import getenv
 from pathlib import Path
+from string import ascii_uppercase
 
+
+# Defines a specialized CasefileConfigParser with interpolation disabled
+CasefileConfigParser = partial(ConfigParser,
+                               interpolation=None)
 
 def _default_config_file(config_name='casefile.ini'):
     return Path(getenv('XDG_CONFIG_HOME', default=Path.home() / '.config' / config_name))
@@ -13,11 +19,13 @@ def _write_config():
         default_config.parent.mkdir()
 
     with default_config.open('w') as new_config_file:
-        config = ConfigParser()
+        config = CasefileConfigParser()
         config['casefile'] = {
                 'base': Path.home() / 'cases',
                 'case_directories': ['raw', 'processed'],
-                'notes': 'notes.md',
+                'case_series': ascii_uppercase,
+                'date_fmt': '%Y-%m-%d',
+                'notes_file': 'notes.md',
         }
         config.write(new_config_file)
 
@@ -38,7 +46,7 @@ def read_config():
     """Try to read the configuration file, and if this fails
     write out a default config.
     """
-    config = ConfigParser()
+    config = CasefileConfigParser()
 
     try:
         config_file = find_config()
