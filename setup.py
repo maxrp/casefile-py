@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
-
+from casefile import __version__
 
 with open('README.md') as f:
     readme = f.read()
@@ -11,8 +11,8 @@ with open('LICENSE') as f:
 
 setup(
     name='casefile',
-    version='0.1.0',
-    description=''
+    version=__version__,
+    description='',
     long_description=readme,
     author='Max Parmer',
     author_email='maxp@trystero.is',

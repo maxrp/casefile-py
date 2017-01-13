@@ -11,7 +11,7 @@ def find_cases(base):
 def list_cases(base):
     return [l for l in find_cases(base)]
 
-def new_case(conf, date_override=False):
+def new_case(summary, conf, date_override=False):
     base = Path(conf['base'])
     case_directories = conf['case_directories'].split(",")
 
@@ -44,3 +44,7 @@ def new_case(conf, date_override=False):
             break
         else:
             continue
+
+    notes = case / conf['notes_file']
+    with notes.open('a') as notes_file:
+        print("# {}: {}".format(date, summary), file=notes_file)
