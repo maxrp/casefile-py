@@ -3,13 +3,22 @@ import os
 from pathlib import Path
 from datetime import datetime as dt
 
-def find_cases(base):
-    for item in os.scandir(base):
+def find_cases(conf):
+    base = Path(conf['base'])
+    for item in os.listdir(str(base)):
+        item = base / item
         if item.is_dir():
-            yield item
+            for child in os.listdir(str(item)):
+                child = item / str(child)
+                yield child
 
-def list_cases(base):
-    return [l for l in find_cases(base)]
+def list_cases(conf):
+    for case in find_cases(conf):
+        notes = case / conf['notes_file']
+        case_id = case.relative_to(conf['base'])
+        with notes.open() as notes_file:
+            summary = notes_file.readline().strip('\n\r# ')
+        yield (case_id, summary)
 
 def new_case(summary, conf, date_override=False):
     base = Path(conf['base'])
