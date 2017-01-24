@@ -49,6 +49,7 @@ def new_case(summary, conf, date_override=False):
             print("Created case {}.".format(case))
             for directory in case_directories:
                 resource_dir = case / directory
+                resource_dir.mkdir()
                 print("Created resource directory {}".format(resource_dir))
             break
         else:
