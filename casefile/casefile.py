@@ -59,3 +59,4 @@ def new_case(summary, conf, date_override=False):
     timestamp = dt.strftime(dt.today(), "%X")
     with notes.open('a') as notes_file:
         print("# {}:  {}".format(timestamp, summary), file=notes_file)
+    return case
