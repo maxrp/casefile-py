@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from datetime import datetime as dt
 
+
 def find_cases(conf):
     base = Path(conf['base'])
     for item in os.listdir(str(base)):
@@ -16,6 +17,7 @@ def find_cases(conf):
                 child = item / str(child)
                 yield child
 
+
 def list_cases(conf):
     for case in find_cases(conf):
         notes = case / conf['notes_file']
@@ -23,6 +25,7 @@ def list_cases(conf):
         with notes.open() as notes_file:
             summary = notes_file.readline().strip('\n\r# ')
         yield (case_id, summary)
+
 
 def new_case(summary, conf, date_override=False):
     base = Path(conf['base'])

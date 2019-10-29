@@ -2,7 +2,7 @@
 # License AGPLv3+: GNU Affero GPL version 3 or later.
 # http://www.gnu.org/licenses/agpl.html
 
-from configparser import ConfigParser, ExtendedInterpolation
+from configparser import ConfigParser
 from functools import partial
 from os import getenv
 from pathlib import Path
@@ -13,8 +13,10 @@ from string import ascii_uppercase
 CasefileConfigParser = partial(ConfigParser,
                                interpolation=None)
 
+
 def _default_config_file(config_name='casefile.ini'):
     return Path(getenv('XDG_CONFIG_HOME', default=Path.home() / '.config' / config_name))
+
 
 def _write_config():
     default_config = _default_config_file()
@@ -35,6 +37,7 @@ def _write_config():
 
     return default_config
 
+
 def find_config(config_name='casefile.ini'):
     """Try to find a :config_name: in the default locations of
     ./:config_name: and failing that ~/$XDG_CONFIG_HOME/casefile.ini
@@ -45,6 +48,7 @@ def find_config(config_name='casefile.ini'):
         if config.exists():
             return config
     raise FileNotFoundError(default_configs[0])
+
 
 def read_config():
     """Try to read the configuration file, and if this fails

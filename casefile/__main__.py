@@ -3,7 +3,6 @@
 # http://www.gnu.org/licenses/agpl.html
 
 import argparse
-import sys
 
 from . import __version__
 from .config import read_config
@@ -36,6 +35,7 @@ def main():
         new_case(args.summary, config['casefile'])
     else:
         parser.print_usage()
+
 
 if __name__ == "__main__":
     main()

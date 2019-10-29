@@ -1,9 +1,9 @@
-import sys
-if sys.version_info[0] < 3:
-    print("This tool only supports Python 3.")
-    sys.exit(127)
-
 from setuptools import setup, find_packages
+from sys import exit, version_info
+if version_info[0] < 3:
+    print("This tool only supports Python 3.")
+    exit(127)
+
 from casefile import __version__
 
 with open('README.md') as f:
