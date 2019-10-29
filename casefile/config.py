@@ -1,3 +1,7 @@
+# Copyright (C) 2017-2019 Max R.D. Parmer
+# License AGPLv3+: GNU Affero GPL version 3 or later.
+# http://www.gnu.org/licenses/agpl.html
+
 from configparser import ConfigParser, ExtendedInterpolation
 from functools import partial
 from os import getenv

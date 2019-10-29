@@ -1,3 +1,7 @@
+# Copyright (C) 2017-2019 Max R.D. Parmer
+# License AGPLv3+: GNU Affero GPL version 3 or later.
+# http://www.gnu.org/licenses/agpl.html
+
 import argparse
 import sys
 
@@ -7,15 +11,12 @@ from .casefile import new_case, list_cases
 
 
 def main():
-    version = '\n'.join(["%(prog)s (casefile-py) {}",
-                         "Copyright (C) 2017 Max R.D. Parmer",
-                         "License AGPLv3+: GNU Affero GPL version 3 or later.",
-                         "http://www.gnu.org/licenses/agpl.html"])
+    version = "%(prog)s (casefile-py) {}".format(__version__)
     parser = argparse.ArgumentParser()
     parser.add_argument('-V',
                         '--version',
                         action='version',
-                        version=version.format(__version__))
+                        version=version)
     parser.add_argument('-l',
                         '--list-cases',
                         action='store_true',
@@ -27,13 +28,14 @@ def main():
                                  help="A brief case summary.")
     args = parser.parse_args()
     config = read_config()
+
     if args.list_cases:
         for case in list_cases(config['casefile']):
             print("{}:\n\t{}".format(*case))
-        sys.exit(0)
-
-    if hasattr(args, 'summary'):
+    elif hasattr(args, 'summary'):
         new_case(args.summary, config['casefile'])
+    else:
+        parser.print_usage()
 
 if __name__ == "__main__":
     main()
