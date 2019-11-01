@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from sys import exit, version_info
+from sys import version_info
 if version_info[0] < 3:
     print("This tool only supports Python 3.")
     exit(127)

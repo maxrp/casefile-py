@@ -4,7 +4,6 @@
 
 import argparse
 from pathlib import Path
-from sys import exit
 
 from . import __version__
 from .config import find_config, read_config, write_config
