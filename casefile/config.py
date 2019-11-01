@@ -38,42 +38,48 @@ def find_config(config_name='casefile.ini'):
     return cfg
 
 
-def _write_config():
-    default_config = find_config()
-
-    if not default_config.parent.exists():
-        default_config.parent.mkdir()
-
-    with default_config.open('w') as new_config_file:
-        config = CasefileConfigParser()
-        config['casefile'] = {
-            'base': Path.home() / 'cases',
-            'case_directories': 'raw,processed',
-            'case_series': ascii_uppercase,
-            'date_fmt': '%Y-%m-%d',
-            'notes_file': 'notes.md',
-        }
-        config.write(new_config_file)
-
-    print(f'Created default config in {default_config}')
-    return default_config
+def _input_or_default(prompt, default):
+    userval = input(f'{prompt}? [{default}]: ')
+    if not userval:
+        return default
+    else:
+        if userval.lower() in ['y', 'yes', 'si', 'sure']:
+            userval = True
+        elif userval.lower in ['n', 'no']:
+            userval = False
+        return userval
 
 
-def read_config():
+def write_config(config_file):
+    init = f'Would you like to create the configuration file "{config_file}"'
+    if _input_or_default(init, 'Yes'):
+        if not config_file.parent.exists():
+            config_file.parent.mkdir()
+
+        with config_file.open('w') as new_config_file:
+            config = CasefileConfigParser()
+            config['casefile'] = {
+                'base':
+                    _input_or_default('CaseFile Base', Path.home() / 'cases'),
+                'case_directories':
+                    _input_or_default('Case Directories', 'raw,processed'),
+                'case_series':
+                    _input_or_default('Case Serial Series', ascii_uppercase),
+                'date_fmt':
+                    _input_or_default('Date Format', '%Y-%m-%d'),
+                'notes_file':
+                    _input_or_default('Notes File', 'notes.md'),
+            }
+            config.write(new_config_file)
+
+        print(f'Created CaseFile configuration in {config_file}')
+        return config_file
+
+
+def read_config(config_file=None):
     """Try to read the configuration file, and if this fails
     write out a default config.
     """
-    try:
-        config_file = find_config()
-    except:
-        raise
-    finally:
-        try:
-          # try to create a config
-          config_file = _write_config()
-        except:
-          raise
-
     config = CasefileConfigParser()
     with config_file.open('r') as cfg:
         config.read_file(cfg)

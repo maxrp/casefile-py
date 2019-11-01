@@ -3,9 +3,11 @@
 # http://www.gnu.org/licenses/agpl.html
 
 import argparse
+from pathlib import Path
+from sys import exit
 
 from . import __version__
-from .config import find_config, read_config
+from .config import find_config, read_config, write_config
 from .casefile import new_case, list_cases
 
 
@@ -30,7 +32,24 @@ def main():
                                  nargs="?",
                                  help="A brief case summary.")
     args = parser.parse_args()
-    config = read_config()
+
+    config_file = Path(args.config)
+
+    if not config_file.exists():
+        try:
+            write_config(config_file)
+        except KeyboardInterrupt:
+            if config_file.exists():
+                config_file.unlink()
+            print()
+            print('Configuration of CaseFile cancelled.')
+            exit(127)
+
+    try:
+        config = read_config(config_file)
+    except Exception:
+        print("Failed to read config.")
+        exit(127)
 
     if args.list_cases:
         for case in list_cases(config['casefile']):
