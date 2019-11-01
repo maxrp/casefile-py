@@ -27,11 +27,11 @@ def _write_config():
     with default_config.open('w') as new_config_file:
         config = CasefileConfigParser()
         config['casefile'] = {
-                'base': Path.home() / 'cases',
-                'case_directories': 'raw,processed',
-                'case_series': ascii_uppercase,
-                'date_fmt': '%Y-%m-%d',
-                'notes_file': 'notes.md',
+            'base': Path.home() / 'cases',
+            'case_directories': 'raw,processed',
+            'case_series': ascii_uppercase,
+            'date_fmt': '%Y-%m-%d',
+            'notes_file': 'notes.md',
         }
         config.write(new_config_file)
 
@@ -63,7 +63,7 @@ def read_config():
         config_file = _write_config()
         print('Created default config in {}'.format(config_file))
 
-    with config_file.open('r') as cf:
-        config.read_file(cf)
+    with config_file.open('r') as cfg:
+        config.read_file(cfg)
 
     return config
