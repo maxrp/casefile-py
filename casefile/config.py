@@ -27,7 +27,8 @@ def find_config(config_name='casefile.ini'):
     elif platform.startswith('linux') or ('bsd' in platform):
         cfg = Path.home() / f'.{config_name}'
     elif platform.startswith('darwin'):
-        cfg = Path.home() / 'Library' / 'is.trystero.CaseFile' / config_name
+        cfg = Path.home() / 'Library' / 'Application Support' / \
+                'is.trystero.CaseFile' / config_name
     else:
         raise Exception(f'{platform} support is not implemented.')
 
