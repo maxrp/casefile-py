@@ -39,7 +39,7 @@ A configuration can be overrode by placing a `casefile.ini` in your `$PWD`.
 ### base
 This defines the base path for creating cases.
 
-### case_firectories
+### case_directories
 These are subdirectories to create in a new casefile.
 
 ### case_series
