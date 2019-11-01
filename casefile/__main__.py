@@ -53,8 +53,11 @@ def main():
     if args.list_cases:
         for case in list_cases(config['casefile']):
             print("{}:\n\t{}".format(*case))
-    elif hasattr(args, 'summary'):
-        new_case(args.summary, config['casefile'])
+    elif hasattr(args, "summary"):
+        if args.summary:
+            new_case(args.summary, config['casefile'])
+        else:
+            new_case(input("Case Summary: "), config['casefile'])
     else:
         parser.print_usage()
 
