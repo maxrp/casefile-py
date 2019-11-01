@@ -7,6 +7,7 @@ from functools import partial
 from os import getenv
 from pathlib import Path
 from string import ascii_uppercase
+from sys import platform
 
 
 # Defines a specialized CasefileConfigParser with interpolation disabled
@@ -15,7 +16,21 @@ CasefileConfigParser = partial(ConfigParser,
 
 
 def _default_config_file(config_name='casefile.ini'):
-    return Path(getenv('XDG_CONFIG_HOME', default=Path.home() / '.config' / config_name))
+    xdg_cfg_home = getenv('XDG_CONFIG_HOME')
+    dot_config = Path.home() / '.config'
+
+    if xdg_cfg_home:
+        cfg = Path(xdg_cfg_home) / config_name
+    elif dot_config.exists():
+        cfg = dot_config / config_name
+    elif platform.startswith('linux') or ('bsd' in platform):
+        cfg = Path.home() / f".{config_name}"
+    elif platform.startswith('darwin'):
+        cfg = Path.home() / 'Library' / 'is.trystero.CaseFile' / config_name
+    else:
+        raise Exception(f"{platform} support is not implemented.")
+
+    return cfg
 
 
 def _write_config():

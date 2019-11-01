@@ -5,7 +5,7 @@
 import argparse
 
 from . import __version__
-from .config import read_config
+from .config import find_config, read_config
 from .casefile import new_case, list_cases
 
 
@@ -20,6 +20,10 @@ def main():
                         '--list-cases',
                         action='store_true',
                         )
+    parser.add_argument('-c',
+                        '--config',
+                        help="Default: %(default)s",
+                        default=find_config())
     subparsers = parser.add_subparsers(help="subcommands")
     new_case_parser = subparsers.add_parser('new', help="New case.")
     new_case_parser.add_argument('summary',
