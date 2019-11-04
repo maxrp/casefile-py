@@ -19,8 +19,15 @@ def main():
                         version=version)
     parser.add_argument('-l',
                         '--list-cases',
+                        action='store_true')
+    parser.add_argument('-g',
+                        '--grepable',
                         action='store_true',
-                        )
+                        help='Output case listings, one per line.')
+    parser.add_argument('-s',
+                        '--sort',
+                        action='store_true',
+                        help='Sort cases lexically.')
     parser.add_argument('-c',
                         '--config',
                         help="Default: %(default)s",
@@ -50,9 +57,17 @@ def main():
         print("Failed to read config.")
         exit(127)
 
-    if args.list_cases:
-        for case in list_cases(config['casefile']):
-            print("{}:\n\t{}".format(*case))
+    if args.list_cases or args.grepable or args.sort:
+        case_list = list_cases(config['casefile'])
+        if args.sort:
+            case_list = sorted(list_cases(config['casefile']))
+
+        listing_format = '{}:\n\t{}'
+        if args.grepable:
+            listing_format = '{}: {}'
+
+        for case in case_list:
+            print(listing_format.format(*case))
     elif hasattr(args, "summary"):
         if args.summary:
             new_case(args.summary, config['casefile'])
