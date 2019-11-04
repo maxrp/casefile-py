@@ -40,13 +40,13 @@ def new_case(summary, conf, date_override=False):
     # Initialize the casefile base directory if it doesn't exist
     if not base.exists():
         base.mkdir()
-        print("Created Casefile base at {}".format(base))
+        print(f'Created CaseFile base at {base}')
 
     # Have we created cases today? If not, create a new date directory.
     date_dir = base / date
     if not date_dir.exists():
         date_dir.mkdir()
-        print("Created directory for cases initiated {}".format(date))
+        print(f'First case for today, {date}\n')
 
     # Find the next case in the series
     for serial in conf['case_series']:
@@ -56,7 +56,8 @@ def new_case(summary, conf, date_override=False):
             for directory in case_directories:
                 resource_dir = case / directory
                 resource_dir.mkdir()
-                print("Created resource directory {}".format(resource_dir))
+                if conf.getboolean('verbose'):
+                    print(f'Created resource directory {resource_dir}')
             print(f'Case opened:\n\t{case}')
             break
         else:

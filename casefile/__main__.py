@@ -17,6 +17,9 @@ def main():
                         '--version',
                         action='version',
                         version=version)
+    parser.add_argument('-v',
+                        '--verbose',
+                        action='store_true')
     parser.add_argument('-l',
                         '--list-cases',
                         action='store_true')
@@ -56,6 +59,9 @@ def main():
     except Exception:
         print("Failed to read config.")
         exit(127)
+
+    if args.verbose:
+        config['casefile']['verbose'] = "yes"
 
     if args.list_cases or args.grepable or args.sort:
         case_list = list_cases(config['casefile'])
