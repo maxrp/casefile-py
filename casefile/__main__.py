@@ -78,7 +78,11 @@ def main():
         if args.summary:
             new_case(args.summary, config['casefile'])
         else:
-            new_case(input("Case Summary: "), config['casefile'])
+            summary = input("Case Summary: ")
+            if summary:
+                new_case(summary, config['casefile'])
+            else:
+                print('You must provide a case summary.')
     else:
         parser.print_usage()
 
