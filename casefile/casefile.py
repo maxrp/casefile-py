@@ -8,6 +8,16 @@ from pathlib import Path
 from datetime import datetime as dt
 
 
+def _read_case_notes(notes, full_text=False):
+    with notes.open() as notes_file:
+        summary = notes_file.readline().strip('\n\r# ')
+        if full_text:
+            details = "".join(notes_file.readlines()[1:])
+            return (summary, details)
+        else:
+            return summary
+
+
 def find_cases(conf):
     base = Path(conf['base'])
     for item in os.listdir(str(base)):
@@ -22,10 +32,17 @@ def list_cases(conf):
     for case in find_cases(conf):
         notes = case / conf['notes_file']
         case_id = case.relative_to(conf['base'])
-        with notes.open() as notes_file:
-            summary = notes_file.readline().strip('\n\r# ')
+        summary = _read_case_notes(notes)
         yield (case_id, summary)
 
+
+def load_case(case_id, conf):
+    base = Path(conf['base'])
+    expected_notes = base / case_id / conf['notes_file']
+    if expected_notes.exists():
+        return _read_case_notes(expected_notes, full_text=True)
+    else:
+        raise FileNotFoundError(expected_notes)
 
 def new_case(summary, conf, date_override=False):
     base = Path(conf['base'])

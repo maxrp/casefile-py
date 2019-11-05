@@ -71,6 +71,20 @@ def write_config(config_file):
                 'notes_file':
                     _input_or_default('Notes File', 'notes.md'),
             }
+            if _input_or_default('Configure Jira?', 'No'):
+                jira = {
+                    'jira_user':
+                        input('Jira user (user@domain): '),
+                    'jira_key':
+                        input('Jira REST API key: '),
+                    'jira_proj':
+                        input('Jira project to post cases in: '),
+                    'jira_type':
+                        input('Jira issue type: '),
+                    'jira_domain':
+                        input('Jira domain (e.g. evilcorp.atlassian.net): ')
+                }
+                config['casefile'].update(jira)
             config.write(new_config_file)
 
         print(f'Created CaseFile configuration in {config_file}')

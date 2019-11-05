@@ -3,11 +3,18 @@
 # http://www.gnu.org/licenses/agpl.html
 
 import argparse
+from importlib.util import find_spec
 from pathlib import Path
 
 from . import __version__
 from .config import find_config, read_config, write_config
-from .casefile import new_case, list_cases
+from .casefile import new_case, list_cases, load_case
+
+HAS_REQUESTS = False
+if find_spec('requests'):
+    HAS_REQUESTS = True
+    from urllib.error import HTTPError
+    from .jira import jira_post
 
 
 def main():
@@ -40,6 +47,14 @@ def main():
     new_case_parser.add_argument('summary',
                                  nargs="?",
                                  help="A brief case summary.")
+
+    if HAS_REQUESTS:
+        promote_parser = subparsers.add_parser('promote',
+                                               help='Post case notes to Jira.')
+        promote_parser.add_argument('case',
+                                    nargs='?',
+                                    help='Case to post to Jira.')
+
     args = parser.parse_args()
 
     config_file = Path(args.config)
@@ -83,6 +98,24 @@ def main():
                 new_case(summary, config['casefile'])
             else:
                 print('You must provide a case summary.')
+    elif hasattr(args, 'case') and HAS_REQUESTS:
+        try:
+            summary, details = load_case(args.case, config['casefile'])
+            # this is excessive, but permits use with older cases in my corpus
+            if ': ' in summary:
+                summary_less_timestamp = summary.partition(': ')[2].strip()
+                summary = f'{args.case} {summary_less_timestamp}'
+            else:
+                summary = f'{args.case} {summary}'
+        except FileNotFoundError as missing_file:
+            print(f'The case "{args.case}" does not exist or is missing the '
+                  f'expected notes file "{missing_file}"')
+            exit(127)
+
+        try:
+            jira_post(summary, details, config['casefile'])
+        except HTTPError as err:
+            print(err)
     else:
         parser.print_usage()
 

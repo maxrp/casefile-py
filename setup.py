@@ -28,10 +28,13 @@ setup(
     url='https://github.com/maxrp/casefile-py',
     license='AGPLv3+',
     packages=find_packages(exclude=('tests', 'docs')),
-    python_requires='>=3.4.*',
+    python_requires='>=3.6.*',
     entry_points={
         'console_scripts': [
             'cf=casefile.__main__:main'
         ]
+    },
+    extras_require={
+        'Jira': ['requests>=2.21.0'],
     }
 )
