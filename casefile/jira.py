@@ -17,7 +17,7 @@ def jira_post(summary, description, conf):
     post_data['fields']['summary'] = summary
     post_data['fields']['description'] = description
     post_data['fields']['project']['key'] = conf['jira_proj']
-    post_data['fields']['issuetype']['name'] = "Incident"
+    post_data['fields']['issuetype']['name'] = 'Incident'
 
     url = f'https://{conf["jira_domain"]}/rest/api/2/issue/'
     response = requests.post(url, json=post_data, auth=(conf['jira_user'],

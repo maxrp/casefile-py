@@ -18,7 +18,7 @@ if find_spec('requests'):
 
 
 def main():
-    version = "%(prog)s (casefile-py) {}".format(__version__)
+    version = f'%(prog)s (casefile-py) {__version__}'
     parser = argparse.ArgumentParser()
     parser.add_argument('-V',
                         '--version',
@@ -40,13 +40,13 @@ def main():
                         help='Sort cases lexically.')
     parser.add_argument('-c',
                         '--config',
-                        help="Default: %(default)s",
+                        help='Default: %(default)s',
                         default=find_config())
-    subparsers = parser.add_subparsers(help="subcommands")
-    new_case_parser = subparsers.add_parser('new', help="New case.")
+    subparsers = parser.add_subparsers(help='subcommands')
+    new_case_parser = subparsers.add_parser('new', help='New case.')
     new_case_parser.add_argument('summary',
-                                 nargs="?",
-                                 help="A brief case summary.")
+                                 nargs='?',
+                                 help='A brief case summary.')
 
     if HAS_REQUESTS:
         promote_parser = subparsers.add_parser('promote',
@@ -72,11 +72,11 @@ def main():
     try:
         config = read_config(config_file)
     except Exception:
-        print("Failed to read config.")
+        print('Failed to read config.')
         exit(127)
 
     if args.verbose:
-        config['casefile']['verbose'] = "yes"
+        config['casefile']['verbose'] = 'yes'
 
     if args.list_cases or args.grepable or args.sort:
         case_list = list_cases(config['casefile'])
@@ -89,11 +89,11 @@ def main():
 
         for case in case_list:
             print(listing_format.format(*case))
-    elif hasattr(args, "summary"):
+    elif hasattr(args, 'summary'):
         if args.summary:
             new_case(args.summary, config['casefile'])
         else:
-            summary = input("Case Summary: ")
+            summary = input('Case Summary: ')
             if summary:
                 new_case(summary, config['casefile'])
             else:
@@ -120,5 +120,5 @@ def main():
         parser.print_usage()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

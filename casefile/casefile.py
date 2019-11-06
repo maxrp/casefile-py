@@ -12,7 +12,7 @@ def _read_case_notes(notes, full_text=False):
     with notes.open() as notes_file:
         summary = notes_file.readline().strip('\n\r# ')
         if full_text:
-            details = "".join(notes_file.readlines()[1:])
+            details = ''.join(notes_file.readlines()[1:])
             return (summary, details)
         else:
             return summary
@@ -44,9 +44,10 @@ def load_case(case_id, conf):
     else:
         raise FileNotFoundError(expected_notes)
 
+
 def new_case(summary, conf, date_override=False):
     base = Path(conf['base'])
-    case_directories = conf['case_directories'].split(",")
+    case_directories = conf['case_directories'].split(',')
 
     # if date_override is set use it's value, otherwise use today's date
     if date_override:
@@ -81,6 +82,6 @@ def new_case(summary, conf, date_override=False):
             continue
 
     notes = case / conf['notes_file']
-    timestamp = dt.strftime(dt.today(), "%X")
+    timestamp = dt.strftime(dt.today(), '%X')
     with notes.open('a') as notes_file:
-        print("# {}:  {}".format(timestamp, summary), file=notes_file)
+        print(f'# {timestamp}:  {summary}', file=notes_file)
