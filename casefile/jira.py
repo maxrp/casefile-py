@@ -15,17 +15,12 @@ DEFAULT_STRUCT = {'fields': {
 
 
 def prep_case(case, conf):
-    try:
-        summary, details = load_case(case, conf)
-        if ': ' in summary:
-            summary_less_timestamp = summary.partition(': ')[2].strip()
-            summary = f'{case} {summary_less_timestamp}'
-        else:
-            summary = f'{case} {summary}'
-    except FileNotFoundError as missing_file:
-        print(f'The case "{case}" does not exist or is missing the '
-              f'expected notes file "{missing_file}"')
-
+    summary, details = load_case(case, conf)
+    if ': ' in summary:
+        summary_less_timestamp = summary.partition(': ')[2].strip()
+        summary = f'{case} {summary_less_timestamp}'
+    else:
+        summary = f'{case} {summary}'
     return (summary, details)
 
 

@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from datetime import datetime as dt
 
+from .errors import IncompleteCase
 
 def _read_case_notes(notes, full_text=False):
     with notes.open() as notes_file:
@@ -58,6 +59,15 @@ def load_case(case_id, conf):
 
 
 def new_case(summary, conf, date_override=False):
+    if not summary:
+        try:
+            summary = input('Case Summary: ')
+        except KeyboardInterrupt:
+            summary = input('Please provide a Case Summary: ')
+
+        if not summary:
+            raise IncompleteCase()
+
     base = Path(conf['base'])
     case_directories = conf['case_directories'].split(',')
 

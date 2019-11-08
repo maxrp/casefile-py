@@ -9,6 +9,7 @@ from pathlib import Path
 from . import __version__
 from .config import find_config, read_config, write_config
 from .casefile import new_case, print_case_listing
+from .errors import IncompleteCase, err
 
 HAS_REQUESTS = False
 if find_spec('requests'):
@@ -80,26 +81,21 @@ def main():
     if args.list_cases or args.grepable or args.sort:
         print_case_listing(config['casefile'], args.grepable, args.sort)
     elif hasattr(args, 'summary'):
-        if args.summary:
+        try:
             new_case(args.summary, config['casefile'])
-        else:
-            summary = input('Case Summary: ')
-            if summary:
-                new_case(summary, config['casefile'])
-            else:
-                print('You must provide a case summary.')
+        except (KeyboardInterrupt, IncompleteCase):
+            err('You must provide a case summary.', 127)
     elif hasattr(args, 'case') and HAS_REQUESTS:
         try:
             summary, details = prep_case(args.case, config['casefile'])
         except FileNotFoundError as missing_file:
-            print(f'The case "{args.case}" does not exist or is missing the '
-                  f'expected notes file "{missing_file}"')
-            exit(127)
+            err((f'The case "{args.case}" does not exist or is missing the ',
+                 f'expected notes file "{missing_file}"'), 127)
 
         try:
             jira_post(summary, details, config['casefile'])
-        except HTTPError as err:
-            print(err)
+        except HTTPError as error:
+            err(error, 127)
     else:
         parser.print_usage()
 
