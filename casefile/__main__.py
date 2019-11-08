@@ -80,7 +80,7 @@ def main():
     if args.list_cases or args.grepable or args.sort:
         case_list = list_cases(config['casefile'])
         if args.sort:
-            case_list = sorted(list_cases(config['casefile']))
+            case_list = sorted(case_list)
 
         listing_format = '{}:\n\t{}'
         if args.grepable:
