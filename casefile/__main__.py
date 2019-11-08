@@ -65,15 +65,8 @@ def main():
         except KeyboardInterrupt:
             if config_file.exists():
                 config_file.unlink()
-            print()
-            print('Configuration of CaseFile cancelled.')
-            exit(127)
-
-    try:
-        config = read_config(config_file)
-    except Exception:
-        print('Failed to read config.')
-        exit(127)
+            err('Configuration of CaseFile cancelled.', 127)
+    config = read_config(config_file)
 
     if args.verbose:
         config['casefile']['verbose'] = 'yes'
