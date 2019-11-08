@@ -4,12 +4,29 @@
 
 import requests
 
+from .casefile import load_case
+
 DEFAULT_STRUCT = {'fields': {
     'project': {'key': ''},
     'summary': '',
     'description': '',
     'issuetype': {'name': ''},
 }}
+
+
+def prep_case(case, conf):
+    try:
+        summary, details = load_case(case, conf)
+        if ': ' in summary:
+            summary_less_timestamp = summary.partition(': ')[2].strip()
+            summary = f'{case} {summary_less_timestamp}'
+        else:
+            summary = f'{case} {summary}'
+    except FileNotFoundError as missing_file:
+        print(f'The case "{case}" does not exist or is missing the '
+              f'expected notes file "{missing_file}"')
+
+    return (summary, details)
 
 
 def jira_post(summary, description, conf):

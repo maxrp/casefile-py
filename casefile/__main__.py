@@ -8,14 +8,13 @@ from pathlib import Path
 
 from . import __version__
 from .config import find_config, read_config, write_config
-from .casefile import new_case, list_cases, load_case
+from .casefile import new_case, list_cases
 
 HAS_REQUESTS = False
 if find_spec('requests'):
     HAS_REQUESTS = True
     from urllib.error import HTTPError
-    from .jira import jira_post
-
+    from .jira import jira_post, prep_case
 
 def main():
     version = f'%(prog)s (casefile-py) {__version__}'
@@ -100,13 +99,7 @@ def main():
                 print('You must provide a case summary.')
     elif hasattr(args, 'case') and HAS_REQUESTS:
         try:
-            summary, details = load_case(args.case, config['casefile'])
-            # this is excessive, but permits use with older cases in my corpus
-            if ': ' in summary:
-                summary_less_timestamp = summary.partition(': ')[2].strip()
-                summary = f'{args.case} {summary_less_timestamp}'
-            else:
-                summary = f'{args.case} {summary}'
+            summary, details = prep_case(args.case, config['casefile'])
         except FileNotFoundError as missing_file:
             print(f'The case "{args.case}" does not exist or is missing the '
                   f'expected notes file "{missing_file}"')
