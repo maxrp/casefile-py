@@ -14,8 +14,7 @@ def _read_case_notes(notes, full_text=False):
         if full_text:
             details = ''.join(notes_file.readlines()[1:])
             return (summary, details)
-        else:
-            return summary
+        return summary
 
 
 def find_cases(conf):
@@ -39,10 +38,9 @@ def list_cases(conf):
 def load_case(case_id, conf):
     base = Path(conf['base'])
     expected_notes = base / case_id / conf['notes_file']
-    if expected_notes.exists():
-        return _read_case_notes(expected_notes, full_text=True)
-    else:
+    if not expected_notes.exists():
         raise FileNotFoundError(expected_notes)
+    return _read_case_notes(expected_notes, full_text=True)
 
 
 def new_case(summary, conf, date_override=False):
