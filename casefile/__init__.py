@@ -2,4 +2,6 @@
 # License AGPLv3+: GNU Affero GPL version 3 or later.
 # http://www.gnu.org/licenses/agpl.html
 
-__version__ = '0.4.0'
+'''CaseFile (cf) -- a command line tool for casefile management.'''
+
+__version__ = '0.4.1'

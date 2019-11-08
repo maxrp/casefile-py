@@ -2,6 +2,12 @@
 # License AGPLv3+: GNU Affero GPL version 3 or later.
 # http://www.gnu.org/licenses/agpl.html
 
+'''cf has a configuration file named casefile.ini or .casefile.ini
+
+This module defines all the functions for finding, reading, and writing
+casefile.ini
+'''
+
 from configparser import ConfigParser
 from functools import partial
 from os import getenv
@@ -15,6 +21,13 @@ CF_CONF_PARSER = partial(ConfigParser, interpolation=None)
 
 
 def find_config(config_name='casefile.ini'):
+    '''Find the most likely casefile.ini location in a platform
+    convention-aware fashion.
+
+    The first stop is XDG_CONFIG_HOME, followed by ~/.config, followed by
+    ~/.casefile.ini, and after that we go to the macOS filesystem hierarchy
+    specified location.
+    '''
     xdg_cfg_home = getenv('XDG_CONFIG_HOME')
     dot_config = Path.home() / '.config'
     local_config = Path.cwd() / config_name
@@ -39,6 +52,11 @@ def find_config(config_name='casefile.ini'):
 
 
 def _input_or_default(prompt, default):
+    '''A wrapper around input() which has a predefined default.
+
+    prompt is the text to display to the user
+    default is the value to return if the user just hits enter
+    '''
     userval = input(f'{prompt}? [{default}]: ')
     if userval:
         if userval.lower() in ['y', 'yes', 'si', 'sure']:
@@ -50,6 +68,10 @@ def _input_or_default(prompt, default):
 
 
 def write_config(config_file):
+    '''A wizard to aid in creating a casefile.ini when one does not yet exist.
+
+    config_file is the destination to write out to.
+    '''
     init = f'Would you like to create the configuration file "{config_file}"'
     if not _input_or_default(init, 'Yes'):
         raise Exception(f'User aborted creation of config "{config_file}"')
@@ -92,9 +114,7 @@ def write_config(config_file):
 
 
 def read_config(config_file=None):
-    """Try to read the configuration file, and if this fails
-    write out a default config.
-    """
+    '''Try to read the configuration file, returning the parsed config.'''
     config = CF_CONF_PARSER()
     with config_file.open('r') as cfg:
         config.read_file(cfg)

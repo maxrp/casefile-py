@@ -1,6 +1,13 @@
 # Copyright (C) 2017-2019 Max R.D. Parmer
 # License AGPLv3+: GNU Affero GPL version 3 or later.
 # http://www.gnu.org/licenses/agpl.html
+'''Provides the core casefile functionality:
+    - read cases
+    - find cases
+    - list cases
+    - print case listings
+    - creates cases
+'''
 
 import os
 
@@ -9,7 +16,9 @@ from datetime import datetime as dt
 
 from .errors import IncompleteCase
 
+
 def _read_case_notes(notes, full_text=False):
+    '''Read the summary notes from a case, optionally reads all the text.'''
     with notes.open() as notes_file:
         summary = notes_file.readline().strip('\n\r# ')
         if full_text:
@@ -19,6 +28,7 @@ def _read_case_notes(notes, full_text=False):
 
 
 def find_cases(conf):
+    '''Searches the case base and yielding cases as they're found.'''
     base = Path(conf['base'])
     for item in os.listdir(str(base)):
         item = base / item
@@ -29,6 +39,8 @@ def find_cases(conf):
 
 
 def list_cases(conf):
+    '''Iterates over found cases yielding a case id and summary as they're
+    found.'''
     for case in find_cases(conf):
         notes = case / conf['notes_file']
         case_id = case.relative_to(conf['base'])
@@ -37,6 +49,10 @@ def list_cases(conf):
 
 
 def print_case_listing(conf, grepable=False, sort=False):
+    '''Prints listings of found cases.
+
+    If grepable, then each case is renderd on one line.
+    If sorted, all cases are discovered and lexically sorted before printing.'''
     case_list = list_cases(conf)
     listing_format = '{}:\n\t{}'
 
@@ -51,6 +67,7 @@ def print_case_listing(conf, grepable=False, sort=False):
 
 
 def load_case(case_id, conf):
+    '''Ensures a case is well-formed enough to use for other purposes.'''
     base = Path(conf['base'])
     expected_notes = base / case_id / conf['notes_file']
     if not expected_notes.exists():
@@ -59,6 +76,7 @@ def load_case(case_id, conf):
 
 
 def new_case(summary, conf, date_override=False):
+    '''Allocates a new case ID and creates the appropriate folders.'''
     if not summary:
         try:
             summary = input('Case Summary: ')

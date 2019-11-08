@@ -1,6 +1,7 @@
 # Copyright (C) 2017-2019 Max R.D. Parmer
 # License AGPLv3+: GNU Affero GPL version 3 or later.
 # http://www.gnu.org/licenses/agpl.html
+'''All support functions and consts for supporting posting cases to Jira.'''
 
 import requests
 
@@ -15,6 +16,12 @@ DEFAULT_STRUCT = {'fields': {
 
 
 def prep_case(case, conf):
+    '''Load and prepare a case for posting
+
+    The summary is the first line of the notes file.
+    The details are the rest of the notes file.
+    The timestamp is removed from the summary to provide a less noisy issue
+    title.'''
     summary, details = load_case(case, conf)
     if ': ' in summary:
         summary_less_timestamp = summary.partition(': ')[2].strip()
@@ -25,6 +32,10 @@ def prep_case(case, conf):
 
 
 def jira_post(summary, description, conf):
+    '''Posts an an issue to Jira
+
+    summary is used as the title
+    description is used as the body'''
     post_data = DEFAULT_STRUCT.copy()
     post_data['fields']['summary'] = summary
     post_data['fields']['description'] = description

@@ -2,6 +2,8 @@
 # License AGPLv3+: GNU Affero GPL version 3 or later.
 # http://www.gnu.org/licenses/agpl.html
 
+'''main() for the cf utility.'''
+
 import argparse
 from importlib.util import find_spec
 from pathlib import Path
@@ -17,8 +19,13 @@ if find_spec('requests'):
     from urllib.error import HTTPError
     from .jira import jira_post, prep_case
 
+
 def main():
-    version = f'%(prog)s (casefile-py) {__version__}'
+    '''Serves as the `cf` entry point.
+
+    Handles arguments and performs top-level error handling.'''
+
+    version = f'%(prog)s v{__version__}'
     parser = argparse.ArgumentParser()
     parser.add_argument('-V',
                         '--version',
