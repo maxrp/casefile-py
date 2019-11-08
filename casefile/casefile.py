@@ -35,6 +35,20 @@ def list_cases(conf):
         yield (case_id, summary)
 
 
+def print_case_listing(conf, grepable=False, sort=False):
+    case_list = list_cases(conf)
+    listing_format = '{}:\n\t{}'
+
+    if sort:
+        case_list = sorted(case_list)
+
+    if grepable:
+        listing_format = '{} {}'
+
+    for case in case_list:
+        print(listing_format.format(*case))
+
+
 def load_case(case_id, conf):
     base = Path(conf['base'])
     expected_notes = base / case_id / conf['notes_file']

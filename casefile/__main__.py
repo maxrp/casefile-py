@@ -8,7 +8,7 @@ from pathlib import Path
 
 from . import __version__
 from .config import find_config, read_config, write_config
-from .casefile import new_case, list_cases
+from .casefile import new_case, print_case_listing
 
 HAS_REQUESTS = False
 if find_spec('requests'):
@@ -78,16 +78,7 @@ def main():
         config['casefile']['verbose'] = 'yes'
 
     if args.list_cases or args.grepable or args.sort:
-        case_list = list_cases(config['casefile'])
-        if args.sort:
-            case_list = sorted(case_list)
-
-        listing_format = '{}:\n\t{}'
-        if args.grepable:
-            listing_format = '{}: {}'
-
-        for case in case_list:
-            print(listing_format.format(*case))
+        print_case_listing(config['casefile'], args.grepable, args.sort)
     elif hasattr(args, 'summary'):
         if args.summary:
             new_case(args.summary, config['casefile'])
