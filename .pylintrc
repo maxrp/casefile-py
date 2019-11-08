@@ -1,0 +1,2 @@
+[TYPECHECK]
+ignored-classes=LookupDict  # To silence the warning from requests.codes.created
