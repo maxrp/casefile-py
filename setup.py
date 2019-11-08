@@ -1,19 +1,26 @@
-from setuptools import setup, find_packages
+'''
+Setup for casefile-py, to install CaseFile, in this directory run:
+    pip install .
+Or, for Jira support:
+    pip install .[Jira]
+'''
+
 from sys import version_info
+from setuptools import setup, find_packages
+from casefile import __version__
+
 if version_info[0] < 3:
     print("This tool only supports Python 3.")
     exit(127)
 
-from casefile import __version__
-
 with open('README.md') as f:
-    readme = f.read()
+    README = f.read()
 
 setup(
     name='casefile',
     version=__version__,
     description='',
-    long_description=readme,
+    long_description=README,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
