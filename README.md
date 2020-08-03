@@ -14,7 +14,7 @@ There is an optional dependency on the Requests library, if you would like Jira
 integration.
 
 ## Installation
-Download the latest tag or release, unpack it, cd into it's directory then:
+Download the latest [tag or release](https://github.com/maxrp/casefile-py/tags), unpack it, cd into it's directory then:
 
     $ pip install .
 
