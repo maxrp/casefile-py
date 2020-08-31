@@ -4,4 +4,4 @@
 
 '''CaseFile (cf) -- a command line tool for casefile management.'''
 
-__version__ = '0.4.1'
+__version__ = '0.4.2'

@@ -35,7 +35,11 @@ def find_cases(conf):
         if item.is_dir():
             for child in os.listdir(str(item)):
                 child = item / str(child)
-                yield child
+                if child.is_dir():
+                    yield child
+                else:
+                    continue
+                    # TODO: warn users about their directory clutter
 
 
 def list_cases(conf):
