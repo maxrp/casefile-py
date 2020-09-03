@@ -4,6 +4,7 @@
 '''
 Definitions of Exception types and associated helpers.
 '''
+from sys import exit as sys_exit
 
 
 class IncompleteCase(Exception):
@@ -13,4 +14,4 @@ class IncompleteCase(Exception):
 def err(message, code):
     '''Take a message to present to the user, and exit with the error code.'''
     print(*message)
-    exit(code)
+    sys_exit(code)

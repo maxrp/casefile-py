@@ -10,7 +10,7 @@ from pathlib import Path
 
 from . import __version__
 from .config import find_config, read_config, write_config
-from .casefile import new_case, print_case_listing
+from .casefile import case_log, latest_case, new_case, print_case_listing
 from .errors import IncompleteCase, err
 
 HAS_REQUESTS = False
@@ -55,6 +55,18 @@ def main():
                                  nargs='?',
                                  help='A brief case summary.')
 
+    log_parser = subparsers.add_parser('log',
+                                       help='Add a log entry to a case.')
+    log_parser.add_argument('case',
+                            nargs=2,
+                            help='The case to log to and a note.')
+
+    log_quick_parser = subparsers.add_parser('log-quick',
+                                             help='Add a log entry to a case.')
+    log_quick_parser.add_argument('note',
+                                  nargs='?',
+                                  help='Add a note to the latest case.')
+
     if HAS_REQUESTS:
         promote_parser = subparsers.add_parser('promote',
                                                help='Post case notes to Jira.')
@@ -97,6 +109,13 @@ def main():
             jira_post(summary, details, config['casefile'])
         except HTTPError as error:
             err(error, 127)
+    elif args.cmd == 'log':
+        case = args.case[0]
+        note = args.case[1]
+        case_log(config['casefile'], case, note)
+    elif args.cmd == 'log-quick':
+        case = latest_case(config['casefile'])
+        case_log(config['casefile'], case, args.note)
     else:
         parser.print_usage()
 

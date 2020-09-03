@@ -8,14 +8,15 @@
     - print case listings
     - creates cases
 TODO: capture $USER in case_log() and new_case()
+TODO: generalize around log/append operations on notes files
 '''
 
 import os
 
 from pathlib import Path
-from datetime import datetime as dt
+from datetime import timedelta, datetime as dt
 
-from .errors import IncompleteCase
+from .errors import IncompleteCase, err
 
 
 def _read_case_notes(notes, full_text=False):
@@ -79,6 +80,45 @@ def load_case(case_id, conf):
     if not expected_notes.exists():
         raise FileNotFoundError(expected_notes)
     return _read_case_notes(expected_notes, full_text=True)
+
+
+def latest_case(conf, search_limit=100):
+    '''Finds the most recently created case.'''
+    check_date = dt.today()
+    base = Path(conf['base'])
+    series = list(conf['case_series'])
+    series.reverse()
+
+    attempts = 0
+    while True:
+        attempts += 1
+        date = Path(dt.strftime(check_date, conf['date_fmt']))
+        date_dir = base / date
+        if date_dir.exists():
+            for serial in series:
+                case_dir = date_dir / serial
+                if case_dir.exists():
+                    case = date / serial
+                    return case
+        else:
+            if attempts <= search_limit:
+                check_date = check_date - timedelta(days=1)
+            else:
+                err(f'No new cases in {search_limit} days.', 127)
+
+
+def case_log(conf, case, note_text):
+    '''Logs a timestamped note to an open case.'''
+    base = Path(conf['base'])
+    case_dir = base / case
+    if case_dir.exists():
+        notes = case_dir / conf['notes_file']
+        if notes.exists():
+            timestamp = dt.strftime(dt.today(), '%X')
+            with notes.open('a') as notes_file:
+                print(f'## {timestamp}: {note_text}', file=notes_file)
+    else:
+        err(f'The case "{case}" does not exist.', 127)
 
 
 def new_case(summary, conf, date_override=False):
