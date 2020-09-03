@@ -49,7 +49,7 @@ def main():
                         '--config',
                         help='Default: %(default)s',
                         default=find_config())
-    subparsers = parser.add_subparsers(help='subcommands')
+    subparsers = parser.add_subparsers(help='subcommands', dest='cmd')
     new_case_parser = subparsers.add_parser('new', help='New case.')
     new_case_parser.add_argument('summary',
                                  nargs='?',
@@ -80,12 +80,13 @@ def main():
 
     if args.list_cases or args.grepable or args.sort:
         print_case_listing(config['casefile'], args.grepable, args.sort)
-    elif hasattr(args, 'summary'):
+    elif args.cmd == 'new':
         try:
+            # TODO: wire up date_override to the CLI
             new_case(args.summary, config['casefile'])
         except (KeyboardInterrupt, IncompleteCase):
             err('You must provide a case summary.', 127)
-    elif hasattr(args, 'case') and HAS_REQUESTS:
+    elif args.cmd == 'promote' and HAS_REQUESTS:
         try:
             summary, details = prep_case(args.case, config['casefile'])
         except FileNotFoundError as missing_file:

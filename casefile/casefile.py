@@ -7,6 +7,7 @@
     - list cases
     - print case listings
     - creates cases
+TODO: capture $USER in case_log() and new_case()
 '''
 
 import os
@@ -56,7 +57,8 @@ def print_case_listing(conf, grepable=False, sort=False):
     '''Prints listings of found cases.
 
     If grepable, then each case is renderd on one line.
-    If sorted, all cases are discovered and lexically sorted before printing.'''
+    If sorted, all cases are discovered and lexically sorted before printing.
+    '''
     case_list = list_cases(conf)
     listing_format = '{}:\n\t{}'
 
@@ -126,6 +128,8 @@ def new_case(summary, conf, date_override=False):
             continue
 
     notes = case / conf['notes_file']
+    # TODO: make TZ representation configurable (local or UTC)
+    # TODO: annotate timestamp with TZ the stamp is in
     timestamp = dt.strftime(dt.today(), '%X')
     with notes.open('a') as notes_file:
         print(f'# {timestamp}:  {summary}', file=notes_file)
