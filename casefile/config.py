@@ -14,13 +14,14 @@ from os import getenv
 from pathlib import Path
 from string import ascii_uppercase
 from sys import platform
+from typing import Any
 
 
 # Refine ConfigParser to CasefileConfigParser, an alias with interpolation disabled
 CasefileConfigParser = partial(ConfigParser, interpolation=None)
 
 
-def find_config(config_name="casefile.ini"):
+def find_config(config_name: str = "casefile.ini") -> Path:
     """Find the most likely casefile.ini location in a platform
     convention-aware fashion.
 
@@ -56,13 +57,13 @@ def find_config(config_name="casefile.ini"):
     return cfg
 
 
-def _input_or_default(prompt, default):
+def _input_or_default(prompt: str, default: Any) -> Any:
     """A wrapper around input() which has a predefined default.
 
     prompt is the text to display to the user
     default is the value to return if the user just hits enter
     """
-    userval = input(f"{prompt}? [{default}]: ")
+    userval: Any = input(f"{prompt}? [{default}]: ")
     if userval:
         if userval.lower() in ["y", "yes", "si", "sure"]:
             userval = True
@@ -72,7 +73,7 @@ def _input_or_default(prompt, default):
     return default
 
 
-def write_config(config_file):
+def write_config(config_file: Path) -> Path:
     """A wizard to aid in creating a casefile.ini when one does not yet exist.
 
     config_file is the destination to write out to.
@@ -108,7 +109,7 @@ def write_config(config_file):
     return config_file
 
 
-def read_config(config_file=None):
+def read_config(config_file: Path) -> ConfigParser:
     """Try to read the configuration file, returning the parsed config."""
     config = CasefileConfigParser()
     with config_file.open("r") as cfg:
