@@ -69,8 +69,8 @@ def print_case_listing(
 ) -> None:
     """Prints listings of found cases.
 
-    If grepable, then each case is renderd on one line.
-    If sorted, all cases are discovered and lexically sorted before printing.
+    If grepable, then each case is rendered on one line.
+    If sort, all cases are discovered and lexically sorted before printing.
     """
     case_list = list_cases(conf)
     listing_format = "{}:\n\t{}"
