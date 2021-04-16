@@ -11,7 +11,7 @@ class IncompleteCase(Exception):
     """A case creation was requested, with incomplete information."""
 
 
-def err(message, code):
+def err(message: str, code: int):
     """Take a message to present to the user, and exit with the error code."""
     print("\n ** ", message, "\n")
     sys_exit(code)

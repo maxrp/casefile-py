@@ -19,7 +19,10 @@ from datetime import timedelta, datetime as dt
 from .errors import IncompleteCase, err
 
 
-def _read_case_notes(notes, full_text=False):
+# FIXME: find a cleaner return type
+def _read_case_notes(
+    notes: Path, full_text: bool = False
+) -> Union[str, Tuple[str, str]]:
     """Read the summary notes from a case, optionally reads all the text."""
     with notes.open() as notes_file:
         summary = notes_file.readline().strip("\n\r# ")
@@ -29,7 +32,8 @@ def _read_case_notes(notes, full_text=False):
         return summary
 
 
-def find_cases(conf):
+# FIXME: resolve typing issues with base/item
+def find_cases(conf: Mapping[str, str]) -> Iterator[Path]:
     """Searches the case base and yielding cases as they're found."""
     base = Path(conf["base"])
     for item in os.listdir(str(base)):
@@ -44,7 +48,11 @@ def find_cases(conf):
                     # TODO: warn users about their directory clutter
 
 
-def list_cases(conf):
+# NOTE: the return type is unnecessarily nightmarish here, _read_case_notes
+#       will fix that though
+def list_cases(
+    conf: Mapping[str, str]
+) -> Iterator[Tuple[Path, Union[str, Tuple[str, str]]]]:
     """Iterates over found cases yielding a case id and summary as they're
     found."""
     for case in find_cases(conf):
@@ -54,7 +62,9 @@ def list_cases(conf):
         yield (case_id, summary)
 
 
-def print_case_listing(conf, grepable=False, sort=False):
+def print_case_listing(
+    conf: Mapping[str, str], grepable: bool = False, sort: bool = False
+) -> None:
     """Prints listings of found cases.
 
     If grepable, then each case is renderd on one line.
@@ -64,7 +74,7 @@ def print_case_listing(conf, grepable=False, sort=False):
     listing_format = "{}:\n\t{}"
 
     if sort:
-        case_list = sorted(case_list)
+        case_list = sorted(case_list)  # NOTE: more _read_case_notes typing fallout
 
     if grepable:
         listing_format = "{} {}"
@@ -73,7 +83,9 @@ def print_case_listing(conf, grepable=False, sort=False):
         print(listing_format.format(*case))
 
 
-def load_case(case_id, conf):
+# NOTE: the return type is correct here, and mypy will be satisfied
+#       once I clean up _read_case_notes
+def load_case(case_id: str, conf: Mapping[str, str]) -> Tuple[str, str]:
     """Ensures a case is well-formed enough to use for other purposes."""
     base = Path(conf["base"])
     expected_notes = base / case_id / conf["notes_file"]
@@ -82,7 +94,7 @@ def load_case(case_id, conf):
     return _read_case_notes(expected_notes, full_text=True)
 
 
-def latest_case(conf, search_limit=100):
+def latest_case(conf: Mapping[str, str], search_limit: int = 100) -> Path:
     """Finds the most recently created case."""
     check_date = dt.today()
     base = Path(conf["base"])
@@ -107,7 +119,7 @@ def latest_case(conf, search_limit=100):
                 err(f"No new cases in {search_limit} days.", 127)
 
 
-def case_log(conf, case, note_text):
+def case_log(conf: Mapping[str, str], case: str, note_text: str) -> None:
     """Logs a timestamped note to an open case."""
     base = Path(conf["base"])
     case_dir = base / case
@@ -121,7 +133,7 @@ def case_log(conf, case, note_text):
         err(f'The case "{case}" does not exist.', 127)
 
 
-def new_case(summary, conf, date_override=False):
+def new_case(summary: str, conf: ConfigParser, date_override: str = "") -> None:
     """Allocates a new case ID and creates the appropriate folders."""
     if not summary:
         try:
@@ -139,7 +151,7 @@ def new_case(summary, conf, date_override=False):
     if date_override:
         date = date_override
     else:
-        date = dt.strftime(dt.today(), conf["date_fmt"])
+        date = dt.strftime(dt.today(), str(conf["date_fmt"]))
 
     # Initialize the casefile base directory if it doesn't exist
     if not base.exists():

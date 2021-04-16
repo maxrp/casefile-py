@@ -17,6 +17,8 @@ from sys import platform
 from typing import Any
 
 
+# TODO: cast paths (base) to Path at parsing
+# TODO: cast lists (case_series, case_directories) to list at parsing
 # Refine ConfigParser to CasefileConfigParser, an alias with interpolation disabled
 CasefileConfigParser = partial(ConfigParser, interpolation=None)
 
