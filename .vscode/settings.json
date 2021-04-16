@@ -1,0 +1,9 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.banditEnabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.pylintUseMinimalCheckers": false,
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black"
+}
