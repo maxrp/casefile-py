@@ -13,8 +13,10 @@ TODO: generalize around log/append operations on notes files
 
 import os
 
-from pathlib import Path
+from configparser import ConfigParser
 from datetime import timedelta, datetime as dt
+from pathlib import Path
+from typing import Iterator, Mapping, Tuple, Union
 
 from .errors import IncompleteCase, err
 
