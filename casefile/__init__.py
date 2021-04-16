@@ -1,7 +1,7 @@
-# Copyright (C) 2017-2019 Max R.D. Parmer
+# Copyright (C) 2017-2021 Max R.D. Parmer
 # License AGPLv3+: GNU Affero GPL version 3 or later.
 # http://www.gnu.org/licenses/agpl.html
 
-'''CaseFile (cf) -- a command line tool for casefile management.'''
+"""CaseFile (cf) -- a command line tool for casefile management."""
 
-__version__ = '0.5.0'
+__version__ = "0.5.1"
