@@ -16,8 +16,8 @@ from string import ascii_uppercase
 from sys import platform
 
 
-# Refine ConfigParser to CF_CONF_PARSER, an alias with interpolation disabled
-CF_CONF_PARSER = partial(ConfigParser, interpolation=None)
+# Refine ConfigParser to CasefileConfigParser, an alias with interpolation disabled
+CasefileConfigParser = partial(ConfigParser, interpolation=None)
 
 
 def find_config(config_name="casefile.ini"):
@@ -85,7 +85,7 @@ def write_config(config_file):
         config_file.parent.mkdir()
 
     with config_file.open("w") as new_config_file:
-        config = CF_CONF_PARSER()
+        config = CasefileConfigParser()
         config["casefile"] = {
             "base": _input_or_default("CaseFile Base", Path.home() / "cases"),
             "case_directories": _input_or_default("Case Directories", "raw,processed"),
@@ -110,7 +110,7 @@ def write_config(config_file):
 
 def read_config(config_file=None):
     """Try to read the configuration file, returning the parsed config."""
-    config = CF_CONF_PARSER()
+    config = CasefileConfigParser()
     with config_file.open("r") as cfg:
         config.read_file(cfg)
 
