@@ -36,3 +36,15 @@ def test_home_find_dotfile(tmpdir):
         config_path = find_config()
 
     assert config_path == expected_config
+
+
+def test_find_config_override(tmpdir):
+    """Test discovery of $PWD/casefile.ini"""
+    expected_config = tmpdir / DEFAULT_CONF
+    os.chdir(tmpdir)
+    expected_config.write("test")
+
+    with mock.patch.dict(os.environ, {"HOME": str(tmpdir)}):
+        config_path = find_config()
+
+    assert config_path == expected_config
