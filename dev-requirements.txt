@@ -1,5 +1,7 @@
+coverage
 bandit
 black
 flake8
 mypy
 pylint
+pytest
