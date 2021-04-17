@@ -6,6 +6,7 @@ from unittest import mock
 import pytest
 
 from casefile.config import find_config
+from casefile.errors import UnsupportedPlatform
 
 DEFAULT_CONF = "casefile.ini"
 
@@ -51,11 +52,13 @@ def test_find_macos_native_config(tmpdir):
         / DEFAULT_CONF
     )
 
-    config_path = find_config(sys_platform="darwin")
+    with mock.patch("casefile.config.platform", "darwin"):
+        config_path = find_config()
 
     assert config_path == expected_config
 
 
 def test_unsupported_platform_config():
-    with pytest.raises(Exception):
-        find_config(sys_platform="win32")
+    with pytest.raises(UnsupportedPlatform):
+        with mock.patch("casefile.config.platform", "win32"):
+            find_config()

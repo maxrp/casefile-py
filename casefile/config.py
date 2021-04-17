@@ -16,6 +16,7 @@ from string import ascii_uppercase
 from sys import platform
 from typing import Any
 
+from .errors import UnsupportedPlatform
 
 # TODO: cast paths (base) to Path at parsing
 # TODO: cast lists (case_series, case_directories) to list at parsing
@@ -23,9 +24,7 @@ from typing import Any
 CasefileConfigParser = partial(ConfigParser, interpolation=None)
 
 
-def find_config(
-    config_name: str = "casefile.ini", sys_platform: str = platform
-) -> Path:
+def find_config(config_name: str = "casefile.ini") -> Path:
     """Find the most likely casefile.ini location in a platform
     convention-aware fashion.
 
@@ -33,7 +32,7 @@ def find_config(
     ~/.casefile.ini, and after that we go to the macOS filesystem hierarchy
     specified location.
     """
-    if sys_platform.startswith("darwin"):
+    if platform.startswith("darwin"):
         cfg = (
             Path.home()
             / "Library"
@@ -41,7 +40,7 @@ def find_config(
             / "is.trystero.CaseFile"
             / config_name
         )
-    elif sys_platform.startswith("linux") or ("bsd" in sys_platform):
+    elif platform.startswith("linux") or ("bsd" in platform):
         xdg_cfg_home = getenv("XDG_CONFIG_HOME")
         dot_config = Path.home() / ".config"
 
@@ -52,7 +51,7 @@ def find_config(
         else:
             cfg = Path.home() / f".{config_name}"
     else:
-        raise Exception(f"{sys_platform} support is not implemented.")
+        raise UnsupportedPlatform(f"{platform} support is not implemented.")
 
     return cfg
 
