@@ -1,6 +1,9 @@
 import os
 
+from pathlib import Path
 from unittest import mock
+
+import pytest
 
 from casefile.config import find_config
 
@@ -38,13 +41,21 @@ def test_home_find_dotfile(tmpdir):
     assert config_path == expected_config
 
 
-def test_find_config_override(tmpdir):
+def test_find_macos_native_config(tmpdir):
     """Test discovery of $PWD/casefile.ini"""
-    expected_config = tmpdir / DEFAULT_CONF
-    os.chdir(tmpdir)
-    expected_config.write("test")
+    expected_config = (
+        Path.home()
+        / "Library"
+        / "Application Support"
+        / "is.trystero.CaseFile"
+        / DEFAULT_CONF
+    )
 
-    with mock.patch.dict(os.environ, {"HOME": str(tmpdir)}):
-        config_path = find_config()
+    config_path = find_config(sys_platform="darwin")
 
     assert config_path == expected_config
+
+
+def test_unsupported_platform_config():
+    with pytest.raises(Exception):
+        find_config(sys_platform="win32")

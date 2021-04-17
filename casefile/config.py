@@ -23,7 +23,9 @@ from typing import Any
 CasefileConfigParser = partial(ConfigParser, interpolation=None)
 
 
-def find_config(config_name: str = "casefile.ini") -> Path:
+def find_config(
+    config_name: str = "casefile.ini", sys_platform: str = platform
+) -> Path:
     """Find the most likely casefile.ini location in a platform
     convention-aware fashion.
 
@@ -31,17 +33,7 @@ def find_config(config_name: str = "casefile.ini") -> Path:
     ~/.casefile.ini, and after that we go to the macOS filesystem hierarchy
     specified location.
     """
-    xdg_cfg_home = getenv("XDG_CONFIG_HOME")
-    dot_config = Path.home() / ".config"
-    local_config = Path.cwd() / config_name
-
-    if xdg_cfg_home:
-        cfg = Path(xdg_cfg_home) / config_name
-    elif dot_config.exists():
-        cfg = dot_config / config_name
-    elif platform.startswith("linux") or ("bsd" in platform):
-        cfg = Path.home() / f".{config_name}"
-    elif platform.startswith("darwin"):
+    if sys_platform.startswith("darwin"):
         cfg = (
             Path.home()
             / "Library"
@@ -49,12 +41,18 @@ def find_config(config_name: str = "casefile.ini") -> Path:
             / "is.trystero.CaseFile"
             / config_name
         )
-    else:
-        raise Exception(f"{platform} support is not implemented.")
+    elif sys_platform.startswith("linux") or ("bsd" in sys_platform):
+        xdg_cfg_home = getenv("XDG_CONFIG_HOME")
+        dot_config = Path.home() / ".config"
 
-    # Or override it all with a local config
-    if local_config.exists():
-        cfg = local_config
+        if xdg_cfg_home:
+            cfg = Path(xdg_cfg_home) / config_name
+        elif dot_config.exists():
+            cfg = dot_config / config_name
+        else:
+            cfg = Path.home() / f".{config_name}"
+    else:
+        raise Exception(f"{sys_platform} support is not implemented.")
 
     return cfg
 
