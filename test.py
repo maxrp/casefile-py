@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 
 from casefile.config import find_config, write_config, read_config, _input_or_default
-from casefile.errors import UnsupportedPlatform
+from casefile.errors import UnsupportedPlatform, err
 
 # pylint: disable=R0201
 class TestConfig:
@@ -67,6 +67,35 @@ class TestConfig:
             with patch("casefile.config.platform", "win32"):
                 find_config()
 
+    def test_input_or_default_default_condition(self):
+        """Ensure that _input_or_default allows users to accept the default."""
+        fake_input = lambda _: ""
+        with patch("casefile.config.input", side_effect=fake_input):
+
+            default_str = "boop"
+            assert default_str == _input_or_default("foo", "boop")
+
+            default_bool = False
+            assert default_bool == _input_or_default("bar", False)
+
+            default_path = Path("/")
+            assert default_path == _input_or_default("baz", default_path)
+
+    def test_input_or_default_input_condition(self):
+        """Ensure that _input_or_default allows users to provide input."""
+        expected_response = "something inappropriate"
+        fake_input = lambda _: expected_response
+        with patch("casefile.config.input", side_effect=fake_input):
+
+            default_str = "boop"
+            assert expected_response == _input_or_default("foo", "boop")
+
+            default_bool = False
+            assert expected_response == _input_or_default("bar", False)
+
+            default_path = Path("/")
+            assert expected_response == _input_or_default("baz", default_path)
+
     @patch("casefile.config.platform", "linux")
     def test_config_write_config_bailout(self, tmpdir):
         """Ensure write_config accepts rejection."""
@@ -106,3 +135,10 @@ class TestConfig:
         ]
         for key in mandatory_keys:
             assert config["casefile"].get(key, False) is not False
+
+
+def test_err_func():
+    """Test that err exits and respects the provided code."""
+    with pytest.raises(SystemExit) as exit_condition:
+        err("Byeee", 255)
+    assert exit_condition.value.code == 255
