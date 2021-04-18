@@ -92,7 +92,7 @@ def write_config(config_file: Path) -> Path:
             "date_fmt": _input_or_default("Date Format", "%Y-%m-%d"),
             "notes_file": _input_or_default("Notes File", "notes.md"),
         }
-        if _input_or_default("Configure Jira?", "No"):
+        if _input_or_default("Configure Jira?", "Yes"):
             jira = {
                 "jira_user": input("Jira user (user@domain): "),
                 "jira_key": input("Jira REST API key: "),
