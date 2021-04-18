@@ -81,7 +81,7 @@ def write_config(config_file: Path) -> Path:
         raise Exception(f'User aborted creation of config "{config_file}"')
 
     if not config_file.parent.exists():
-        config_file.parent.mkdir()
+        config_file.parent.mkdir(parents=True)
 
     with config_file.open("w") as new_config_file:
         config = CasefileConfigParser()

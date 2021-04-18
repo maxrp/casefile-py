@@ -78,3 +78,31 @@ class TestConfig:
                 with patch("casefile.config.input", side_effect=fake_input):
                     with pytest.raises(Exception):
                         write_config(config_path)
+
+    @patch("casefile.config.platform", "darwin")
+    def test_config_write_read_config_integration(self, tmpdir):
+        """Ensure write_config produces a readable config and
+        that the minimum required keys are present.
+
+        The config subsystem needs to be rewritten so this is
+        somewhat of a placeholder.
+        """
+        with patch.dict(os.environ, {"HOME": str(tmpdir)}):
+            with patch.dict(os.environ, {"XDG_CONFIG_HOME": str(tmpdir)}):
+                config_path = find_config()
+                fake_input = lambda _: ""
+
+                with patch("casefile.config.input", side_effect=fake_input):
+                    write_config(config_path)
+
+        # If something's really screwed up, this'll throw an exception
+        config = read_config(config_path)
+        mandatory_keys = [
+            "base",
+            "case_directories",
+            "case_series",
+            "date_fmt",
+            "notes_file",
+        ]
+        for key in mandatory_keys:
+            assert config["casefile"].get(key, False) is not False
