@@ -62,14 +62,13 @@ def _input_or_default(prompt: str, default: Any) -> Any:
     prompt is the text to display to the user
     default is the value to return if the user just hits enter
     """
-    userval: Any = input(f"{prompt}? [{default}]: ")
-    if userval:
-        if userval.lower() in ["y", "yes", "si", "sure"]:
-            userval = True
-        elif userval.lower in ["n", "no"]:
-            userval = False
-        return userval
-    return default
+    answer: Any = input(f"{prompt}? [{default}]: ") or default
+    if isinstance(answer, str):
+        if answer.lower() in ["y", "yes", "si", "sure"]:
+            answer = True
+        elif answer.lower() in ["n", "no"]:
+            answer = False
+    return answer
 
 
 def write_config(config_file: Path) -> Path:

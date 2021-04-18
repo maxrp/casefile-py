@@ -66,3 +66,15 @@ class TestConfig:
         with pytest.raises(UnsupportedPlatform):
             with patch("casefile.config.platform", "win32"):
                 find_config()
+
+    @patch("casefile.config.platform", "linux")
+    def test_config_write_config_bailout(self, tmpdir):
+        """Ensure write_config accepts rejection."""
+        with patch.dict(os.environ, {"HOME": str(tmpdir)}):
+            with patch.dict(os.environ, {"XDG_CONFIG_HOME": str(tmpdir)}):
+                config_path = find_config()
+                fake_input = lambda _: "n"
+
+                with patch("casefile.config.input", side_effect=fake_input):
+                    with pytest.raises(Exception):
+                        write_config(config_path)
