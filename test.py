@@ -5,34 +5,33 @@ from unittest.mock import patch
 
 import pytest
 
-from casefile.config import find_config, write_config
+from casefile.config import find_config, write_config, read_config, _input_or_default
 from casefile.errors import UnsupportedPlatform
 
-
+# pylint: disable=R0201
 class TestConfig:
     """Test casefile.config components"""
 
     config_file = "casefile.ini"
 
+    @patch("casefile.config.platform", "linux")
     def test_xdg_find_config(self, tmpdir):
         """Test config discovery on linux under XDG"""
         expected_config = tmpdir / self.config_file
 
-        with patch("casefile.config.platform", "linux"):
-            # assuming linux (or bsd...)
-            with patch.dict(os.environ, {"XDG_CONFIG_HOME": str(tmpdir)}):
-                config_path = find_config()
+        with patch.dict(os.environ, {"XDG_CONFIG_HOME": str(tmpdir)}):
+            config_path = find_config()
 
         assert config_path == expected_config
 
+    @patch("casefile.config.platform", "linux")
     def test_home_find_dotconfig(self, tmpdir):
         """Test discovery of ~/.config/casefile.ini"""
         expected_config = tmpdir.mkdir(".config") / self.config_file
         expected_config.write("test")
 
-        with patch("casefile.config.platform", "linux"):
-            with patch.dict(os.environ, {"HOME": str(tmpdir)}):
-                config_path = find_config()
+        with patch.dict(os.environ, {"HOME": str(tmpdir)}):
+            config_path = find_config()
 
         assert config_path == expected_config
 
@@ -46,17 +45,18 @@ class TestConfig:
 
         assert config_path == expected_config
 
+    @patch("casefile.config.platform", "darwin")
     def test_find_macos_native_config(self, tmpdir):
         """Test discovery of $PWD/casefile.ini"""
-        expected_config = (
-            Path.home()
-            / "Library"
-            / "Application Support"
-            / "is.trystero.CaseFile"
-            / self.config_file
-        )
 
-        with patch("casefile.config.platform", "darwin"):
+        with patch.dict(os.environ, {"HOME": str(tmpdir)}):
+            expected_config = (
+                Path.home()
+                / "Library"
+                / "Application Support"
+                / "is.trystero.CaseFile"
+                / self.config_file
+            )
             config_path = find_config()
 
         assert config_path == expected_config
