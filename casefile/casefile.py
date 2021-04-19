@@ -38,11 +38,11 @@ def _read_case_body(notes: Path) -> str:
 def find_cases(conf: Mapping[str, str]) -> Iterator[Path]:
     """Searches the case base and yielding cases as they're found."""
     base = Path(conf["base"])
-    for item in os.listdir(str(base)):
-        item = base / item
+    for listing_item in os.listdir(str(base)):
+        item = base / listing_item
         if item.is_dir():
-            for child in os.listdir(str(item)):
-                child = item / str(child)
+            for listing_child in os.listdir(str(item)):
+                child = item / listing_child
                 if child.is_dir():
                     yield child
                 else:
