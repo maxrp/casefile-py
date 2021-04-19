@@ -28,7 +28,6 @@ def main():
     version = f"%(prog)s v{__version__}"
     parser = argparse.ArgumentParser()
     parser.add_argument("-V", "--version", action="version", version=version)
-    parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-l", "--list-cases", action="store_true")
     parser.add_argument(
         "-g",
@@ -74,9 +73,6 @@ def main():
                 config_file.unlink()
             err("Configuration of CaseFile cancelled.", 127)
     config = read_config(config_file)
-
-    if args.verbose:
-        config["casefile"]["verbose"] = "yes"
 
     if args.list_cases or args.grepable or args.sort:
         print_case_listing(config["casefile"], args.grepable, args.sort)

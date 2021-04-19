@@ -168,8 +168,6 @@ def new_case(summary: str, conf: ConfigParser, date_override: str = "") -> None:
             for directory in case_directories:
                 resource_dir = case / directory
                 resource_dir.mkdir()
-                if conf.getboolean("verbose"):
-                    print(f"Created resource directory {resource_dir}")
             print(f"Case opened:\n\t{case}")
             break
         else:
