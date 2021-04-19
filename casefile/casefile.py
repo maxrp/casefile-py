@@ -16,25 +16,25 @@ import os
 from configparser import ConfigParser
 from datetime import timedelta, datetime as dt
 from pathlib import Path
-from typing import Iterator, Mapping, Tuple, Union
+from typing import Iterator, Mapping, Tuple
 
 from .errors import IncompleteCase, err
 
 
-# FIXME: find a cleaner return type
-def _read_case_notes(
-    notes: Path, full_text: bool = False
-) -> Union[str, Tuple[str, str]]:
+def _read_case_notes(notes: Path) -> str:
     """Read the summary notes from a case, optionally reads all the text."""
     with notes.open() as notes_file:
         summary = notes_file.readline().strip("\n\r# ")
-        if full_text:
-            details = "".join(notes_file.readlines()[1:])
-            return (summary, details)
         return summary
 
 
-# FIXME: resolve typing issues with base/item
+def _read_case_body(notes: Path) -> str:
+    """Read the summary notes from a case, optionally reads all the text."""
+    with notes.open() as notes_file:
+        body = "".join(notes_file.readlines()[1:])
+        return body
+
+
 def find_cases(conf: Mapping[str, str]) -> Iterator[Path]:
     """Searches the case base and yielding cases as they're found."""
     base = Path(conf["base"])
@@ -50,11 +50,7 @@ def find_cases(conf: Mapping[str, str]) -> Iterator[Path]:
                     # TODO: warn users about their directory clutter
 
 
-# NOTE: the return type is unnecessarily nightmarish here, _read_case_notes
-#       will fix that though
-def list_cases(
-    conf: Mapping[str, str]
-) -> Iterator[Tuple[Path, Union[str, Tuple[str, str]]]]:
+def list_cases(conf: Mapping[str, str]) -> Iterator[Tuple[Path, str]]:
     """Iterates over found cases yielding a case id and summary as they're
     found."""
     for case in find_cases(conf):
@@ -76,7 +72,7 @@ def print_case_listing(
     listing_format = "{}:\n\t{}"
 
     if sort:
-        case_list = sorted(case_list)  # NOTE: more _read_case_notes typing fallout
+        case_list = sorted(case_list)
 
     if grepable:
         listing_format = "{} {}"
@@ -85,15 +81,13 @@ def print_case_listing(
         print(listing_format.format(*case))
 
 
-# NOTE: the return type is correct here, and mypy will be satisfied
-#       once I clean up _read_case_notes
 def load_case(case_id: str, conf: Mapping[str, str]) -> Tuple[str, str]:
-    """Ensures a case is well-formed enough to use for other purposes."""
+    """Ensures a case exists, then loads it."""
     base = Path(conf["base"])
     expected_notes = base / case_id / conf["notes_file"]
     if not expected_notes.exists():
         raise FileNotFoundError(expected_notes)
-    return _read_case_notes(expected_notes, full_text=True)
+    return (_read_case_notes(expected_notes), _read_case_body(expected_notes))
 
 
 def latest_case(conf: Mapping[str, str], search_limit: int = 100) -> Path:
