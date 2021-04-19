@@ -16,7 +16,7 @@ import os
 from configparser import ConfigParser
 from datetime import timedelta, datetime as dt
 from pathlib import Path
-from typing import Iterator, Mapping, Tuple
+from typing import Iterable, Iterator, Mapping, Tuple
 
 from .errors import IncompleteCase, err
 
@@ -68,7 +68,7 @@ def print_case_listing(
     If grepable, then each case is rendered on one line.
     If sort, all cases are discovered and lexically sorted before printing.
     """
-    case_list = list_cases(conf)
+    case_list: Iterable[Tuple[Path, str]] = list_cases(conf)
     listing_format = "{}:\n\t{}"
 
     if sort:
