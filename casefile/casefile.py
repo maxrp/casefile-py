@@ -81,7 +81,7 @@ def print_case_listing(
         print(listing_format.format(*case))
 
 
-def load_case(case_id: str, conf: Mapping[str, str]) -> Tuple[str, str]:
+def load_case(conf: Mapping[str, str], case_id: str) -> Tuple[str, str]:
     """Ensures a case exists, then loads it."""
     base = Path(conf["base"])
     expected_notes = base / case_id / conf["notes_file"]
@@ -129,7 +129,7 @@ def case_log(conf: Mapping[str, str], case: str, note_text: str) -> None:
         err(f'The case "{case}" does not exist.', 127)
 
 
-def new_case(summary: str, conf: ConfigParser, date_override: str = "") -> None:
+def new_case(conf: ConfigParser, summary: str, date_override: str = "") -> None:
     """Allocates a new case ID and creates the appropriate folders."""
     if not summary:
         try:

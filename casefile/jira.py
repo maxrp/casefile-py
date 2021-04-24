@@ -17,14 +17,14 @@ DEFAULT_STRUCT = {
 }
 
 
-def prep_case(case, conf):
+def prep_case(conf, case):
     """Load and prepare a case for posting
 
     The summary is the first line of the notes file.
     The details are the rest of the notes file.
     The timestamp is removed from the summary to provide a less noisy issue
     title."""
-    summary, details = load_case(case, conf)
+    summary, details = load_case(conf, case)
     if ": " in summary:
         summary_less_timestamp = summary.partition(": ")[2].strip()
         summary = f"{case} {summary_less_timestamp}"
@@ -33,7 +33,7 @@ def prep_case(case, conf):
     return (summary, details)
 
 
-def jira_post(summary, description, conf):
+def jira_post(conf, summary, description):
     """Posts an an issue to Jira
 
     summary is used as the title

@@ -79,12 +79,12 @@ def main():
     elif args.cmd == "new":
         try:
             # TODO: wire up date_override to the CLI
-            new_case(args.summary, config["casefile"])
+            new_case(config["casefile"], args.summary)
         except (KeyboardInterrupt, IncompleteCase):
             err("You must provide a case summary.", 127)
     elif args.cmd == "promote" and HAS_REQUESTS:
         try:
-            summary, details = prep_case(args.case, config["casefile"])
+            summary, details = prep_case(config["casefile"], args.case)
         except FileNotFoundError as missing_file:
             err(
                 (
@@ -95,7 +95,7 @@ def main():
             )
 
         try:
-            jira_post(summary, details, config["casefile"])
+            jira_post(config["casefile"], summary, details)
         except HTTPError as error:
             err(error, 127)
     elif args.cmd == "log":
