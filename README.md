@@ -20,7 +20,7 @@ Download the latest [tag or release](https://github.com/maxrp/casefile-py/tags),
 
 Or, if you'd like Jira support:
 
-    $ pip install .[Jira]
+    $ pip install ".[Jira]"
 
 I prefer `--user` installs, you might not! Either should work.
 
