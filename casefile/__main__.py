@@ -10,7 +10,7 @@ from pathlib import Path
 
 from . import __version__
 from .config import find_config, read_config, write_config
-from .casefile import case_log, latest_case, new_case, print_case_listing
+from .casefile import CaseFile
 from .errors import IncompleteCase, err
 
 HAS_REQUESTS = False
@@ -72,14 +72,16 @@ def main():
             if config_file.exists():
                 config_file.unlink()
             err("Configuration of CaseFile cancelled.", 127)
-    config = read_config(config_file)
+    config = read_config(config_file)["casefile"]
+
+    casefile = CaseFile(config)
 
     if args.list_cases or args.grepable or args.sort:
-        print_case_listing(config["casefile"], args.grepable, args.sort)
+        casefile.print_listing(args.grepable, args.sort)
     elif args.cmd == "new":
         try:
             # TODO: wire up date_override to the CLI
-            new_case(config["casefile"], args.summary)
+            casefile.new(args.summary)
         except (KeyboardInterrupt, IncompleteCase):
             err("You must provide a case summary.", 127)
     elif args.cmd == "promote" and HAS_REQUESTS:
@@ -101,10 +103,10 @@ def main():
     elif args.cmd == "log":
         case = args.case[0]
         note = args.case[1]
-        case_log(config["casefile"], case, note)
+        casefile.log(case, note)
     elif args.cmd == "log-quick":
-        case = latest_case(config["casefile"])
-        case_log(config["casefile"], case, args.note)
+        case = casefile.latest()
+        casefile.log(case, args.note)
     else:
         parser.print_usage()
 
