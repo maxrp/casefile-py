@@ -49,9 +49,6 @@ class CaseFile:
                     child = item / listing_child
                     if child.is_dir():
                         yield child
-                    else:
-                        continue
-                        # TODO: warn users about their directory clutter
 
     def list_cases(self) -> Iterator[Tuple[Path, str]]:
         """Iterates over found cases yielding a case id and summary as they're
